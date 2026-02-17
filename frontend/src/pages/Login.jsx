@@ -25,7 +25,7 @@ const Login = () => {
       });
       setAuth({
         accessToken: res.data.data.accessToken,
-        role: res.data.data.role,
+        role: res.data.data.user.role,
       });
       console.log(res.data);
 

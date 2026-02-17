@@ -162,7 +162,9 @@ const refreshToken = asyncHandler(async (req, res) => {
     }
 
     //get user from db through decoded token
-    const user = await User.findById(decodedToken._id);
+    const user = await User.findById(decodedToken._id).select(
+      "-password -refreshToken",
+    );
     if (!user) {
       throw new ApiError(401, "Refresh Token is expired or used");
     }
@@ -170,8 +172,8 @@ const refreshToken = asyncHandler(async (req, res) => {
     //creating options for safety
     const options = {
       httpOnly: true,
-      secure: true,
-      sameSite: "strict",
+      secure: false,
+      sameSite: "lax",
     };
 
     //generating refreshToken
@@ -187,7 +189,7 @@ const refreshToken = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(
           200,
-          { accessToken, refreshToken },
+          { accessToken, refreshToken, user },
           "New Refresh Token Created",
         ),
       );
